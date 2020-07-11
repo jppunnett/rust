@@ -11,12 +11,16 @@ fn main() {
 
     println!("Searching for {}\nin file {}\n", config.query, config.filename);
 
+    run(config);
+}
+
+fn run(config: Config) {
     let contents = fs::read_to_string(config.filename)
         .expect("Could not read file");
 
     println!("With text:\n{}", contents);
-
 }
+
 
 struct Config {
     query: String,
