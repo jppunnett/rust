@@ -1,4 +1,5 @@
 use std::error::Error;
+use core::time::Duration;
 
 #[cfg(test)]
 mod tests {
@@ -12,15 +13,19 @@ mod tests {
 
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    // Main logic goes here.
-    println!("{:?}", config);
+
+    reqwest::blocking::Client::builder()
+        .timeout(Duration::from_millis(config.timeout))
+        .build()?
+        .head(&config.url)
+        .send()?;
+
     Ok(())
 }
 
-#[derive(Debug)]
 pub struct Config {
     pub url: String,
-    pub timeout: u32,
+    pub timeout: u64,
 }
 
 impl Config {
