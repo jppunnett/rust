@@ -31,7 +31,13 @@ impl Config {
         }
 
         let url = args[1].clone();
-        let timeout = if args.len() > 2 { args[2].parse().unwrap() } else { 500 };
+        let timeout = if args.len() > 2 {
+            match args[2].parse() {
+                Ok(t) => t,
+                Err(_) => return Err("Are you sure timeout is a number?"),
+            }
+        }
+        else { 500 };
 
         Ok(Config { url, timeout })
     }
