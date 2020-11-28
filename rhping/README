@@ -7,4 +7,8 @@ supplied URL and reports how long it takes to get a response.
 
 Use like this:
 
-	rhping url
+	rhping url [timeout]
+
+The optional timeout flag specifies how long rhping should wait for a response
+until giving up. The timeout is specified in milliseconds. If timeout isn't
+specified, the default is 500ms.
