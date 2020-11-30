@@ -3,7 +3,7 @@ use core::time::Duration;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    // use super::*;
 
     #[test]
     fn some_test() {
@@ -14,8 +14,10 @@ mod tests {
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
+    println!("Pinging {:?} with timeout {:?}...", config.url, config.timeout);
+
     reqwest::blocking::Client::builder()
-        .timeout(Duration::from_millis(config.timeout))
+        .timeout(config.timeout)
         .build()?
         .head(&config.url)
         .send()?;
@@ -25,7 +27,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
 pub struct Config {
     pub url: String,
-    pub timeout: u64,
+    pub timeout: Duration,
 }
 
 impl Config {
@@ -38,11 +40,11 @@ impl Config {
         let url = args[1].clone();
         let timeout = if args.len() > 2 {
             match args[2].parse() {
-                Ok(t) => t,
+                Ok(t) => Duration::from_millis(t),
                 Err(_) => return Err("Are you sure timeout is a number?"),
             }
         }
-        else { 500 };
+        else { Duration::from_millis(500) };
 
         Ok(Config { url, timeout })
     }
