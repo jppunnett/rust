@@ -23,23 +23,23 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         .timeout(config.timeout)
         .build()?;
 
+    let mut tot_resp_time: Duration = Duration::from_millis(0);
     for _x in 0..5 {
-        http_ping(&client, &config.url)?;
+        let resp_time = http_ping(&client, &config.url)?;
+        tot_resp_time += resp_time;
+        println!("Received response in {:?}", resp_time);
         sleep(Duration::from_millis(1000));
     }
+
+    println!("Avg response time: {:?}.", tot_resp_time/5);
 
     Ok(())
 }
 
-fn http_ping(client: &Client, url: &String) -> Result<(), Box<dyn Error>> {
-
+fn http_ping(client: &Client, url: &String) -> Result<Duration, Box<dyn Error>> {
     let now = Instant::now();
-
     client.head(url).send()?;
-
-    println!("Received response in {:?}", now.elapsed());
-
-    Ok(())
+    Ok(now.elapsed())
 }
 
 
