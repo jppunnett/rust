@@ -1,5 +1,8 @@
 use std::error::Error;
+use std::thread::{sleep};
 use std::time::{Duration, Instant};
+
+use reqwest::blocking::Client;
 
 #[cfg(test)]
 mod tests {
@@ -16,17 +19,29 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     println!("Pinging {:?} with timeout {:?}...", config.url, config.timeout);
 
-    let now = Instant::now();
-    reqwest::blocking::Client::builder()
+    let client = reqwest::blocking::Client::builder()
         .timeout(config.timeout)
-        .build()?
-        .head(&config.url)
-        .send()?;
+        .build()?;
+
+    for _x in 0..5 {
+        http_ping(&client, &config.url)?;
+        sleep(Duration::from_millis(1000));
+    }
+
+    Ok(())
+}
+
+fn http_ping(client: &Client, url: &String) -> Result<(), Box<dyn Error>> {
+
+    let now = Instant::now();
+
+    client.head(url).send()?;
 
     println!("Received response in {:?}", now.elapsed());
 
     Ok(())
 }
+
 
 pub struct Config {
     pub url: String,
