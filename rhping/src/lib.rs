@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::thread::{sleep};
+use std::thread::sleep;
 use std::time::{Duration, Instant};
 
 use reqwest::blocking::Client;
@@ -14,10 +14,11 @@ mod tests {
     }
 }
 
-
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-
-    println!("Pinging {:?} with timeout {:?}...", config.url, config.timeout);
+    println!(
+        "Pinging {:?} with timeout {:?}...",
+        config.url, config.timeout
+    );
 
     let client = reqwest::blocking::Client::builder()
         .timeout(config.timeout)
@@ -31,7 +32,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         sleep(Duration::from_millis(1000));
     }
 
-    println!("Avg response time: {:?}.", tot_resp_time/5);
+    println!("Avg response time: {:?}.", tot_resp_time / 5);
 
     Ok(())
 }
@@ -42,7 +43,6 @@ fn http_ping(client: &Client, url: &str) -> Result<Duration, Box<dyn Error>> {
     Ok(now.elapsed())
 }
 
-
 pub struct Config {
     pub url: String,
     pub timeout: Duration,
@@ -50,7 +50,6 @@ pub struct Config {
 
 impl Config {
     pub fn new(args: &[String]) -> Result<Config, &'static str> {
-
         if args.len() < 2 {
             return Err("Usage: rhping URL [timeout]");
         }
@@ -61,10 +60,10 @@ impl Config {
                 Ok(t) => Duration::from_millis(t),
                 Err(_) => return Err("Are you sure timeout is a number?"),
             }
-        }
-        else { Duration::from_millis(500) };
+        } else {
+            Duration::from_millis(500)
+        };
 
         Ok(Config { url, timeout })
     }
 }
-
