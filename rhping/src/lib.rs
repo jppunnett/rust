@@ -28,7 +28,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     for _x in 0..5 {
         let resp_time = http_ping(&client, &config.url)?;
         tot_resp_time += resp_time;
-        println!("Received response in {:?}", resp_time);
+        println!("Reply from {}: time: {:?}", config.url, resp_time);
         sleep(Duration::from_millis(1000));
     }
 
