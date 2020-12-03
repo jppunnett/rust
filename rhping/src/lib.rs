@@ -36,7 +36,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn http_ping(client: &Client, url: &String) -> Result<Duration, Box<dyn Error>> {
+fn http_ping(client: &Client, url: &str) -> Result<Duration, Box<dyn Error>> {
     let now = Instant::now();
     client.head(url).send()?;
     Ok(now.elapsed())
