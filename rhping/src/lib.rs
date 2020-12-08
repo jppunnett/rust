@@ -3,6 +3,7 @@ use std::thread::sleep;
 use std::time::{Duration, Instant};
 
 use reqwest::blocking::Client;
+use structopt::StructOpt;
 
 #[cfg(test)]
 mod tests {
@@ -21,7 +22,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     );
 
     let client = reqwest::blocking::Client::builder()
-        .timeout(config.timeout)
+        .timeout(Duration::from_millis(config.timeout))
         .build()?;
 
     let mut tot_resp_time: Duration = Duration::from_millis(0);
@@ -43,27 +44,12 @@ fn http_ping(client: &Client, url: &str) -> Result<Duration, Box<dyn Error>> {
     Ok(now.elapsed())
 }
 
+#[derive(StructOpt)]
+#[structopt(about = "Ping a URL.")]
 pub struct Config {
+    #[structopt(help = "URL to ping.")]
     pub url: String,
-    pub timeout: Duration,
-}
 
-impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 2 {
-            return Err("Usage: rhping URL [timeout]");
-        }
-
-        let url = args[1].clone();
-        let timeout = if args.len() > 2 {
-            match args[2].parse() {
-                Ok(t) => Duration::from_millis(t),
-                Err(_) => return Err("Are you sure timeout is a number?"),
-            }
-        } else {
-            Duration::from_millis(500)
-        };
-
-        Ok(Config { url, timeout })
-    }
+    #[structopt(default_value = "500", help = "Timeout in milliseconds.")]
+    pub timeout: u64,
 }
